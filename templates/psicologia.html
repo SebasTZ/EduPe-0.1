@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}EduPe - Psicología{% endblock %}
+
+{% block content %}
+<section class="content-section">
+    <h2>Generación de Contenido Psicológico</h2>
+    <input type="text" id="topic-input-psicologia" placeholder="Ingrese un tema psicológico">
+    <button id="generate-btn-psicologia" class="custom-btn">Generar Contenido</button>
+    <div id="dynamic-content-psicologia" class="dynamic-content">
+        <!-- Aquí se mostrará el contenido generado -->
+    </div>
+</section>
+
+<script>
+// Función para generar contenido dinámico en psicología
+async function generarContenidoPsicologia() {
+    const inputText = document.getElementById('topic-input-psicologia').value.trim();
+
+    if (!inputText) {
+        alert('Por favor, ingrese un tema.');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/generar-contenido-psicologia', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ input: inputText })
+        });
+
+        if (!response.ok) {
+            throw new Error('Error en la solicitud a la API');
+        }
+
+        const data = await response.json();
+        const responseText = data.response;
+
+        const outputDiv = document.getElementById('dynamic-content-psicologia');
+        outputDiv.innerHTML = `<p><strong>Contenido generado:</strong></p><p>${responseText}</p>`;
+        
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+// Asociar la función al botón de generar contenido psicológico
+document.getElementById('generate-btn-psicologia').addEventListener('click', generarContenidoPsicologia);
+</script>
+
+{% endblock %}

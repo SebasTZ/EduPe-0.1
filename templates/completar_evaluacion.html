@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Completar Evaluación
+{% endblock %}
+
+{% block content %}
+<section class="evaluacion-section">
+    <h1>Completar Evaluación</h1>
+
+    {% if evaluacion %}
+    <form id="form-evaluacion">
+        <!-- Hidden input for Evaluation ID -->
+        <input type="hidden" id="evaluacion-id" value="{{ evaluacion.id }}">
+
+        <!-- Listado de preguntas de la evaluación -->
+        {% for pregunta in evaluacion.questions %}
+        <div class="pregunta">
+            <p><strong>{{ pregunta.pregunta }}</strong></p>
+            <div class="opciones">
+                <label>
+                    <input type="radio" name="pregunta-{{ pregunta.id }}" value="A">
+                    {{ pregunta.opcion_a }}
+                </label><br>
+                <label>
+                    <input type="radio" name="pregunta-{{ pregunta.id }}" value="B">
+                    {{ pregunta.opcion_b }}
+                </label><br>
+                <label>
+                    <input type="radio" name="pregunta-{{ pregunta.id }}" value="C">
+                    {{ pregunta.opcion_c }}
+                </label><br>
+                <label>
+                    <input type="radio" name="pregunta-{{ pregunta.id }}" value="D">
+                    {{ pregunta.opcion_d }}
+                </label>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Botón para enviar respuestas -->
+        <button id="enviar-respuestas" type="button" class="btn btn-success">Enviar Respuestas</button>
+
+        <!-- Botón para volver a Evaluaciones y guardar resultados -->
+        <button id="guardar-y-volver" type="button" class="btn btn-primary">Volver a Evaluaciones</button>
+    </form>
+    {% else %}
+    <p>No se encontró la evaluación.</p>
+    {% endif %}
+</section>
+{% endblock %}

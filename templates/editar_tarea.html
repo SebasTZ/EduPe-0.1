@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Tarea{% endblock %}
+
+{% block content %}
+<h2>Editar Tarea</h2>
+<form method="POST" action="{{ url_for('editar_tarea', task_id=tarea['id']) }}">
+    <label for="title">Título:</label>
+    <input type="text" id="title" name="title" value="{{ tarea['title'] }}" required>
+
+    <label for="description">Descripción:</label>
+    <textarea id="description" name="description">{{ tarea['description'] }}</textarea>
+
+    <label for="due_date">Fecha de vencimiento:</label>
+    <input type="date" id="due_date" name="due_date" value="{{ tarea['due_date'] }}">
+
+    <label for="priority">Prioridad:</label>
+    <select id="priority" name="priority">
+        <option value="Alta" {% if tarea['priority'] == 'Alta' %}selected{% endif %}>Alta</option>
+        <option value="Media" {% if tarea['priority'] == 'Media' %}selected{% endif %}>Media</option>
+        <option value="Baja" {% if tarea['priority'] == 'Baja' %}selected{% endif %}>Baja</option>
+    </select>
+
+    <label for="status">Estado:</label>
+    <select id="status" name="status">
+        <option value="Sin empezar" {% if tarea['status'] == 'Sin empezar' %}selected{% endif %}>Sin empezar</option>
+        <option value="En progreso" {% if tarea['status'] == 'En progreso' %}selected{% endif %}>En progreso</option>
+        <option value="Completada" {% if tarea['status'] == 'Completada' %}selected{% endif %}>Completada</option>
+    </select>
+
+    <button type="submit">Guardar Cambios</button>
+</form>
+{% endblock %}
+

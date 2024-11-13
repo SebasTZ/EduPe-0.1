@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Retroalimentación Completa
+{% endblock %}
+
+{% block content %}
+<section class="feedback-section">
+    <h1>Retroalimentación de la Evaluación</h1>
+
+    {% if feedback %}
+        <div class="retroalimentacion">
+            <h3>Evaluación: {{ evaluacion.nombre }}</h3>
+            <p><strong>Nota:</strong> {{ feedback.nota }} / 10</p>
+            <p><strong>Comentarios:</strong></p>
+            <p>{{ feedback.comentarios }}</p>
+        </div>
+
+        <!-- Botón para volver a Evaluaciones -->
+        <a href="{{ url_for('evaluaciones') }}" class="btn btn-primary">Volver a Evaluaciones</a>
+    {% else %}
+        <p>No se encontró retroalimentación para esta evaluación.</p>
+    {% endif %}
+</section>
+{% endblock %}

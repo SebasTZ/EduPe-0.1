@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}EduPe - Recursos Educativos{% endblock %}
+
+{% block content %}
+<section class="resource-section">
+    <h1>Recursos Educativos</h1>
+
+    <!-- Botón para abrir el formulario de creación de recursos -->
+    <button id="crear-recurso-btn" class="btn-crear-recurso">Generar Recurso Educativo</button>
+
+    <!-- Modal para generar un recurso educativo -->
+    <div id="recurso-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModal()">&times;</span>
+            <h2>Generar Nuevo Recurso</h2>
+            <form id="crear-recurso-form">
+                <label for="tema">Tema:</label>
+                <input type="text" id="tema" name="tema" required>
+                <button type="submit" class="btn-submit">Generar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Aquí se muestran los recursos generados -->
+    {% if recursos %}
+        <ul class="resource-list">
+            {% for recurso in recursos %}
+                <li>
+                    <h3>{{ recurso.title }}</h3>
+                    <p>{{ recurso.description }}</p>
+                    <a href="{{ recurso.link }}" target="_blank">Acceder al recurso</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay recursos disponibles.</p>
+    {% endif %}
+</section>
+
+<style>
+    /* General Styles */
+    .resource-section {
+        margin: 20px;
+    }
+    .resource-list {
+        list-style-type: none;
+        padding: 0;
+    }
+    .resource-list li {
+        margin-bottom: 15px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    .resource-list h3 {
+        margin-top: 0;
+    }
+    .resource-list a {
+        color: #007bff;
+        text-decoration: none;
+    }
+    .resource-list a:hover {
+        text-decoration: underline;
+    }
+    .btn-crear-recurso {
+        margin-bottom: 20px;
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    .btn-crear-recurso:hover {
+        background-color: #218838;
+    }
+
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+    .modal-content {
+        background-color: #fff;
+        margin: 10% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 50%;
+        max-width: 500px;
+        border-radius: 8px;
+    }
+    .close {
+        float: right;
+        font-size: 1.5em;
+        cursor: pointer;
+    }
+    .btn-submit {
+        margin-top: 10px;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    .btn-submit:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+<script>
+    // Abrir y cerrar modal
+    const crearRecursoBtn = document.getElementById("crear-recurso-btn");
+    const recursoModal = document.getElementById("recurso-modal");
+    function abrirModal() { recursoModal.style.display = "block"; }
+    function cerrarModal() { recursoModal.style.display = "none"; }
+    crearRecursoBtn.onclick = abrirModal;
+
+    // Enviar el formulario para generar el recurso
+    document.getElementById("crear-recurso-form").onsubmit = async function(e) {
+        e.preventDefault();
+        const tema = document.getElementById("tema").value;
+
+        try {
+            const response = await fetch("/api/generar-recurso", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ tema: tema })
+            });
+
+            if (response.ok) { // Verifica que el status sea 200-299
+                const data = await response.json();
+                console.log("Respuesta del servidor:", data); // Debug: Verifica la respuesta
+
+                alert(data.message);
+
+                if (data.resource) {
+                    // Verificar si .resource-list existe
+                    let listaRecursos = document.querySelector(".resource-list");
+                    
+                    // Si no existe .resource-list, crearla
+                    if (!listaRecursos) {
+                        listaRecursos = document.createElement("ul");
+                        listaRecursos.className = "resource-list";
+                        document.querySelector(".resource-section").appendChild(listaRecursos);
+                    }
+
+                    // Crear el nuevo recurso y añadirlo a la lista
+                    const nuevoRecurso = document.createElement("li");
+                    nuevoRecurso.innerHTML = `
+                        <h3>${data.resource.title}</h3>
+                        <p>${data.resource.description}</p>
+                        <a href="${data.resource.link}" target="_blank">Acceder al recurso</a>
+                    `;
+                    listaRecursos.appendChild(nuevoRecurso);
+                    console.log("Recurso añadido a la lista."); // Debug: Confirma que el recurso fue añadido
+                    cerrarModal();
+                }
+            } else {
+                // Si no es 200-299, muestra la alerta de error
+                const errorData = await response.json();
+                alert(errorData.error || "Hubo un error al generar el recurso.");
+            }
+        } catch (error) {
+            console.error("Error en la solicitud:", error);
+            alert("Hubo un error al generar el recurso.");
+        }
+    };
+</script>
+{% endblock %}

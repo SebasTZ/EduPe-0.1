@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}EduPe - Educación{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <h1>Bienvenido a la Sección de Educación</h1>
+    <p>En esta sección encontrarás contenido personalizado basado en tu perfil educativo, herramientas de estudio y mucho más.</p>
+
+    <!-- Botón resaltado para redirigir al perfil estudiantil -->
+    <div class="perfil-estudiante">
+        <h3>Accede a tu Perfil Estudiantil</h3>
+        <p>Consulta y actualiza tu perfil educativo para recibir contenido personalizado, gestionar tus tareas y acceder a recursos educativos.</p>
+        <a href="{{ url_for('perfil_estudiantil') }}" class="btn-perfil">
+            Ver Perfil Estudiantil
+        </a>
+    </div>
+
+    <!-- Generación de contenido a través de IA -->
+    <div class="educational-content">
+        <h3>Generación de Contenido Educativo</h3>
+        <form action="{{ url_for('educacion') }}" method="POST">
+            <label for="tema">Introduce un tema para aprender:</label>
+            <input type="text" id="tema" name="tema" required>
+            <button type="submit" class="btn-generar">Generar Contenido</button>
+        </form>
+    </div>
+
+    <!-- Mostrar contenido generado si está disponible -->
+    {% if contenido %}
+    <div class="contenido-generado">
+        <h3>Contenido Generado:</h3>
+        <p>{{ contenido }}</p>
+    </div>
+    {% endif %}
+
+    <!-- Botones adicionales para acceder a Recursos Educativos, Gestión de Tareas y Evaluaciones -->
+    <div class="extra-options">
+        <h3>Explora Más Opciones</h3>
+        <div class="buttons">
+            <a href="{{ url_for('recursos') }}" class="btn-option">Recursos Educativos</a>
+            <a href="{{ url_for('mostrar_tareas') }}" class="btn-option">Gestión de Tareas</a>
+            <a href="{{ url_for('evaluaciones') }}" class="btn-option">Evaluaciones</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EduPe{% endblock %}</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon">
+
+    <!-- Enlace al archivo CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+<body>
+
+<header>
+    <div class="logo">🧠 EduPe</div>
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('educacion') }}" class="{% if request.path == '/educacion' %}active{% endif %}">Educación</a></li>
+            <li><a href="{{ url_for('psicologia') }}" class="{% if request.path == '/psicologia' %}active{% endif %}">Psicología</a></li>
+            <li><a href="{{ url_for('chat') }}" class="{% if request.path == '/chat' %}active{% endif %}">Chat EduPe</a></li>
+        </ul>
+    </nav>
+    <div class="user-profile">
+        <span>Usuario</span>
+        <div class="dropdown">
+            <a href="{{ url_for('perfil') }}">Ver Perfil</a>
+            <a href="{{ url_for('logout') }}">Cerrar Sesión</a>
+        </div>
+    </div>
+</header>
+
+<main>
+    {% block content %} 
+    <!-- Aquí se inyectará el contenido específico de cada página -->
+    {% endblock %}
+</main>
+
+<!-- Enlace al archivo JavaScript -->
+<script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+
+</body>
+</html>

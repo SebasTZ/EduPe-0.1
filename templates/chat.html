@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}EduPe - Chat IA{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <h1>Chat con EduPe</h1>
+    <div id="chat-container" class="chat-container">
+        <div id="chat-history" class="chat-history">
+            <!-- Aquí se mostrará el historial del chat -->
+        </div>
+
+        <!-- Indicador de escritura (mostrado mientras la IA está procesando la respuesta) -->
+        <div id="typing-indicator" class="typing-indicator" style="display:none;">
+            <span>EduPe está escribiendo...</span>
+        </div>
+
+        <!-- Formulario de entrada de chat -->
+        <div class="chat-input-section">
+            <input type="text" id="input-text" placeholder="Haz una pregunta a la IA" class="search-bar">
+            <button class="start-btn" id="chat-btn">Preguntar</button>
+        </div>
+
+        <!-- Botones de sugerencias para preguntas rápidas -->
+        <div class="suggestions">
+            <button class="suggestion-btn">¿Qué es la fotosíntesis?</button>
+            <button class="suggestion-btn">Explícame el teorema de Pitágoras</button>
+            <button class="suggestion-btn">¿Qué es un agujero negro?</button>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Función para enviar el mensaje en el chat
+    document.getElementById('chat-btn').addEventListener('click', function() {
+        const userInput = document.getElementById('input-text').value;
+
+        if (userInput.trim() !== '') {
+            // Añadir mensaje del usuario al historial del chat
+            addMessageToChat('user', userInput);
+
+            // Limpiar input
+            document.getElementById('input-text').value = '';
+
+            // Mostrar el indicador de escritura mientras se procesa la respuesta
+            document.getElementById('typing-indicator').style.display = 'block';
+
+            // Enviar la solicitud al backend para obtener la respuesta de la IA
+            fetch('/api/ia', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ input: userInput })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('typing-indicator').style.display = 'none'; // Ocultar el indicador de escritura
+
+                if (data.response) {
+                    // Mostrar la respuesta de la IA en el historial del chat
+                    addMessageToChat('bot', data.response);
+                } else {
+                    // Mostrar mensaje de error en caso de que no haya respuesta
+                    addMessageToChat('bot', 'Lo siento, no se pudo generar una respuesta en este momento.');
+                }
+            })
+            .catch(error => {
+                console.error('Error al procesar la solicitud:', error);
+                document.getElementById('typing-indicator').style.display = 'none'; // Ocultar el indicador en caso de error
+                addMessageToChat('bot', 'Error al procesar la solicitud. Inténtalo de nuevo más tarde.');
+            });
+        }
+    });
+
+    // Añadir el mensaje al historial del chat
+    function addMessageToChat(sender, message) {
+        const chatHistory = document.getElementById('chat-history');
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+        messageDiv.textContent = message;
+        chatHistory.appendChild(messageDiv);
+        chatHistory.scrollTop = chatHistory.scrollHeight; // Hacer scroll hasta abajo automáticamente
+    }
+
+    // Función para manejar el envío de preguntas de sugerencias rápidas
+    document.querySelectorAll('.suggestion-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            document.getElementById('input-text').value = this.innerText;
+            document.getElementById('chat-btn').click();  // Enviar la pregunta
+        });
+    });
+
+    // Agregar función para envío con tecla Enter
+    document.getElementById('input-text').addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();  // Evitar el envío duplicado
+            document.getElementById('chat-btn').click();
+        }
+    });
+</script>
+{% endblock %}

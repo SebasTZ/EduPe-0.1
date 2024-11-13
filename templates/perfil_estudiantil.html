@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Perfil Estudiantil{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <h1>Perfil Educativo de {{ profile.user.nombre if profile.user else "Usuario Desconocido" }}</h1>
+
+    <!-- Mostrar detalles del perfil del estudiante -->
+    <div class="perfil-info">
+        <h3>Detalles de tu Perfil Educativo:</h3>
+        <p><strong>Nivel Educativo:</strong> {{ profile.education_level if profile.education_level else "No especificado" }}</p>
+        <p><strong>Estilo de Aprendizaje:</strong> {{ profile.learning_style if profile.learning_style else "No especificado" }}</p>
+        <p><strong>Intereses Académicos:</strong> {{ profile.interests if profile.interests else "No especificado" }}</p>
+
+        <!-- Botón para editar el perfil -->
+        <a href="{{ url_for('editar_perfil_educativo') }}" class="btn-edit-perfil">Editar Perfil</a>
+    </div>
+</section>
+{% endblock %}
+

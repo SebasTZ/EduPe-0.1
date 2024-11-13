@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}EduPe - Perfil{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <h1>Perfil de {{ user.nombre }}</h1>
+    <p>Email: {{ user.email }}</p>
+    <p>Fecha de Registro: {{ user.created_at }}</p>
+
+    <!-- Formulario para editar el perfil -->
+    <form action="{{ url_for('perfil') }}" method="POST">
+        <div>
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" value="{{ user.nombre }}" required>
+        </div>
+        <div>
+            <label for="email">Correo Electrónico:</label>
+            <input type="email" id="email" name="email" value="{{ user.email }}" required>
+        </div>
+        <div>
+            <button type="submit">Guardar cambios</button>
+        </div>
+    </form>
+</section>
+{% endblock %}
+
+

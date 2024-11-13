@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}EduPe - Gestión de Tareas{% endblock %}
+
+{% block content %}
+<section class="task-section">
+    <h1>Gestión de Tareas</h1>
+
+    <!-- Botón para agregar una nueva tarea -->
+    <div class="add-task">
+        <a href="{{ url_for('nueva_tarea_form') }}" class="btn-add-task">Agregar Nueva Tarea</a>
+    </div>
+
+    {% if tareas %}
+        <table class="task-table">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Descripción</th>
+                    <th>Fecha de Vencimiento</th>
+                    <th>Prioridad</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tarea in tareas %}
+                <tr>
+                    <td>{{ tarea.title }}</td>
+                    <td>{{ tarea.description }}</td>
+                    <td>{{ tarea.due_date }}</td>
+                    <td>{{ tarea.priority }}</td>
+                    <td>{{ tarea.status }}</td>
+                    <td>
+                        <a href="{{ url_for('editar_tarea', task_id=tarea['id']) }}" class="btn-action">Editar</a>
+                        <form action="{{ url_for('eliminar_tarea', task_id=tarea['id']) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn-action btn-delete">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No hay tareas asignadas.</p>
+    {% endif %}
+</section>
+
+<style>
+    .task-section {
+        margin: 20px;
+    }
+    .task-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    .task-table th, .task-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    .task-table th {
+        background-color: #f4f4f4;
+        color: #333;
+    }
+    .btn-action {
+        margin-right: 10px;
+        text-decoration: none;
+        color: #007bff;
+    }
+    .btn-action:hover {
+        text-decoration: underline;
+    }
+    .btn-delete {
+        color: #dc3545;
+        border: none;
+        background: none;
+        cursor: pointer;
+    }
+    .btn-add-task {
+        display: inline-block;
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+    .btn-add-task:hover {
+        background-color: #0056b3;
+    }
+</style>
+{% endblock %}

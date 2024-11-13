@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Retroalimentación de la Evaluación
+{% endblock %}
+
+{% block content %}
+<section class="feedback-section">
+    <h1>Retroalimentación</h1>
+    <p>Esta es la retroalimentación para la evaluación que has completado:</p>
+
+    <!-- Mostrar comentarios de retroalimentación -->
+    {% if retroalimentacion %}
+        <p>{{ retroalimentacion }}</p>
+    {% else %}
+        <p>No se encontró retroalimentación para esta evaluación.</p>
+    {% endif %}
+
+    <!-- Ajuste: Redirección JavaScript para asegurar que funcione -->
+    <a href="#" class="btn btn-primary" onclick="window.location.href='/evaluaciones'; return false;">Volver a Evaluaciones</a>
+</section>
+{% endblock %}
+
