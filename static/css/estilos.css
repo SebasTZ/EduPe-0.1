@@ -3,11 +3,11 @@ body, html {
     margin: 0;
     padding: 0;
     height: 100%;
-    font-family: 'Roboto', sans-serif; /* Updated font */
-    background-color: #f8f9fa; /* Lighter background */
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa;
     display: flex;
     flex-direction: column;
-    color: #333; /* Global text color */
+    color: #333;
 }
 
 /* Header */
@@ -16,7 +16,7 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    background-color: #343a40; /* Darker header */
+    background-color: #343a40;
     color: white;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     position: sticky;
@@ -26,7 +26,7 @@ header {
 }
 
 header .logo {
-    font-size: 2rem; /* Increased font size */
+    font-size: 2rem;
     font-weight: bold;
     color: #fff;
 }
@@ -80,6 +80,32 @@ header nav ul li a:hover, header nav ul li a.active {
 .btn-perfil:active, .btn-option:active, .btn-generar:active {
     transform: scale(0.98);
     background-color: #003d80;
+}
+
+/* Improved View Profile and Log Out Buttons */
+.btn-view-profile, .btn-logout {
+    display: inline-block;
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: white;
+    padding: 12px 25px;
+    text-decoration: none;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    transition: background 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn-view-profile:hover, .btn-logout:hover {
+    background: linear-gradient(135deg, #5a0ebc, #1f65e6);
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-view-profile:active, .btn-logout:active {
+    transform: scale(0.98);
+    background: linear-gradient(135deg, #4a0c9c, #1b55c6);
 }
 
 /* Main Section */
@@ -307,7 +333,7 @@ main {
     display: inline-block;
     padding: 10px 20px;
     margin: 5px 0;
-    background-color: #007bff; /* Color azul claro */
+    background-color: #007bff;
     color: white;
     text-align: center;
     font-size: 14px;
@@ -320,13 +346,13 @@ main {
 }
 
 .btn-feedback:hover {
-    background-color: #0056b3; /* Color azul más oscuro para hover */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Sombra en hover */
+    background-color: #0056b3;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .btn-feedback:focus {
     outline: none;
-    box-shadow: 0px 0px 10px rgba(0, 123, 255, 0.5); /* Efecto de enfoque */
+    box-shadow: 0px 0px 10px rgba(0, 123, 255, 0.5);
 }
 
 /* Chat Section */
