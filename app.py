@@ -27,7 +27,7 @@ DATABASE_ID = "12d1d0aab1818036a4a9d65630a65dbe"
 app.secret_key = 'your_secret_key'
 
 # OpenAI API Key
-openai.api_key = 'sk-6YfP3I2ukvVAgzmlFLk9uQ5tP0S8bZjpYGhXDWj43tT3BlbkFJ6qZWAxNGP9Zxw4UdC5Yhkhrh2pmtBMOeAhwxRF0PMA'
+openai.api_key = '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'
 
 # MySQL configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:Sebas3120@localhost/chatter_ai_db'

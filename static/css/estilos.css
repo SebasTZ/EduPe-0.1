@@ -3,10 +3,11 @@ body, html {
     margin: 0;
     padding: 0;
     height: 100%;
-    font-family: 'Arial', sans-serif;
-    background-color: #f0f2f5;
+    font-family: 'Roboto', sans-serif; /* Updated font */
+    background-color: #f8f9fa; /* Lighter background */
     display: flex;
     flex-direction: column;
+    color: #333; /* Global text color */
 }
 
 /* Header */
@@ -15,7 +16,7 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    background-color: #007bff;
+    background-color: #343a40; /* Darker header */
     color: white;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     position: sticky;
@@ -25,7 +26,7 @@ header {
 }
 
 header .logo {
-    font-size: 1.8rem;
+    font-size: 2rem; /* Increased font size */
     font-weight: bold;
     color: #fff;
 }
