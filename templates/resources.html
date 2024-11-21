@@ -129,4 +129,152 @@
         background-color: #0056b3;
     }
 </style>
+<<<<<<< HEAD
+=======
+
+<script>
+    // Abrir y cerrar modal
+    const crearRecursoBtn = document.getElementById("crear-recurso-btn");
+    const recursoModal = document.getElementById("recurso-modal");
+    function abrirModal() { recursoModal.style.display = "block"; }
+    function cerrarModal() { recursoModal.style.display = "none"; }
+    crearRecursoBtn.onclick = abrirModal;
+
+    // Enviar el formulario para generar el recurso
+    document.getElementById("crear-recurso-form").onsubmit = async function(e) {
+        e.preventDefault();
+        const tema = document.getElementById("tema").value;
+
+        try {
+            const [gptResponse, educacionResponse, psicologiaResponse, youtubeResponse, booksResponse] = await Promise.all([
+                fetch("/api/generar-recurso", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ tema: tema })
+                }),
+                fetch("/api/generar-contenido-educacion", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ input: tema })
+                }),
+                fetch("/api/generar-contenido-psicologia", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ input: tema })
+                }),
+                fetch(`/api/youtube?query=${tema}`), // YouTube Data API
+                fetch(`/api/google-books?query=${tema}`) // Google Books API
+            ]);
+
+            const [gptData, educacionData, psicologiaData, youtubeData, booksData] = await Promise.all([
+                gptResponse.json(),
+                educacionResponse.json(),
+                psicologiaResponse.json(),
+                youtubeResponse.json(),
+                booksResponse.json()
+            ]);
+
+            if (gptResponse.ok && educacionResponse.ok && psicologiaResponse.ok && youtubeResponse.ok && booksResponse.ok) {
+                alert("Recursos generados exitosamente.");
+
+                let listaRecursos = document.querySelector(".resource-list");
+                
+                if (!listaRecursos) {
+                    listaRecursos = document.createElement("ul");
+                    listaRecursos.className = "resource-list";
+                    document.querySelector(".resource-section").appendChild(listaRecursos);
+                }
+
+                const recursosGenerados = [
+                    { title: gptData.resource.title, description: gptData.resource.description, link: gptData.resource.link },
+                    { title: "Contenido Educativo", description: educacionData.response, link: "#" },
+                    { title: "Contenido Psicológico", description: psicologiaData.response, link: "#" },
+                    ...youtubeData.items.map(item => ({
+                        title: item.snippet.title,
+                        description: item.snippet.description,
+                        link: `https://www.youtube.com/watch?v=${item.id.videoId}`
+                    })),
+                    ...booksData.items.map(item => ({
+                        title: item.volumeInfo.title,
+                        description: item.volumeInfo.description || "Sin descripción disponible.",
+                        link: item.volumeInfo.infoLink
+                    }))
+                ];
+
+                recursosGenerados.forEach(recurso => {
+                    const nuevoRecurso = document.createElement("li");
+                    nuevoRecurso.innerHTML = `
+                        <h3>${recurso.title}</h3>
+                        <p>${recurso.description}</p>
+                        <a href="${recurso.link}" target="_blank">Acceder al recurso</a>
+                    `;
+                    listaRecursos.appendChild(nuevoRecurso);
+                });
+
+                cerrarModal();
+            } else {
+                alert("Hubo un error al generar los recursos.");
+            }
+        } catch (error) {
+            alert("Hubo un error al generar los recursos.");
+        }
+    };
+
+    // Handle API button clicks
+    document.getElementById("gpt-btn").onclick = async function() {
+        const tema = document.getElementById("tema").value;
+        const response = await fetch("/api/generar-recurso", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ tema: tema })
+        });
+        const data = await response.json();
+        if (response.ok) {
+            alert("Recurso generado con éxito: " + data.resource.title);
+        } else {
+            alert("Error al generar recurso: " + data.error);
+        }
+    };
+
+    document.getElementById("youtube-btn").onclick = async function() {
+        const tema = document.getElementById("tema").value;
+        const response = await fetch(`/api/youtube?query=${tema}`);
+        const data = await response.json();
+        if (response.ok) {
+            data.items.forEach(item => {
+                const nuevoRecurso = document.createElement("li");
+                nuevoRecurso.innerHTML = `
+                    <h3>${item.snippet.title}</h3>
+                    <p>${item.snippet.description}</p>
+                    <a href="https://www.youtube.com/watch?v=${item.id.videoId}" target="_blank">Acceder al recurso</a>
+                `;
+                document.querySelector(".resource-list").appendChild(nuevoRecurso);
+            });
+            alert("Recursos de YouTube generados con éxito.");
+        } else {
+            alert("Error al obtener recursos de YouTube: " + data.error);
+        }
+    };
+
+    document.getElementById("google-books-btn").onclick = async function() {
+        const tema = document.getElementById("tema").value;
+        const response = await fetch(`/api/google-books?query=${tema}`);
+        const data = await response.json();
+        if (response.ok) {
+            data.items.forEach(item => {
+                const nuevoRecurso = document.createElement("li");
+                nuevoRecurso.innerHTML = `
+                    <h3>${item.volumeInfo.title}</h3>
+                    <p>${item.volumeInfo.description || "Sin descripción disponible."}</p>
+                    <a href="${item.volumeInfo.infoLink}" target="_blank">Acceder al recurso</a>
+                `;
+                document.querySelector(".resource-list").appendChild(nuevoRecurso);
+            });
+            alert("Recursos de Google Books generados con éxito.");
+        } else {
+            alert("Error al obtener recursos de Google Books: " + data.error);
+        }
+    };
+</script>
+>>>>>>> e85d449 (Mejora en la gestion de recursos)
 {% endblock %}

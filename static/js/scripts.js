@@ -107,6 +107,7 @@ function updateResourceList(resource) {
 
 // Ensure DOM is fully loaded before adding event listeners
 document.addEventListener('DOMContentLoaded', function() {
+<<<<<<< HEAD
     const gptButton = document.getElementById('gpt-btn');
     const youtubeButton = document.getElementById('youtube-btn');
     const googleBooksButton = document.getElementById('google-books-btn');
@@ -263,4 +264,11 @@ document.getElementById("google-books-btn").onclick = async function() {
     }
 };
 
+=======
+    document.getElementById('gpt-btn')?.addEventListener('click', handleGptButtonClick);
+    document.getElementById('youtube-btn')?.addEventListener('click', handleYouTubeButtonClick);
+    document.getElementById('google-books-btn')?.addEventListener('click', handleGoogleBooksButtonClick);
+});
+
+>>>>>>> e85d449 (Mejora en la gestion de recursos)
 // Existing functions...
