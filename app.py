@@ -429,6 +429,17 @@ def generar_contenido_psicologia():
         print(f"Error al generar contenido psicológico: {e}")
         return jsonify({'response': 'Error al procesar la solicitud a la API.'}), 500
 
+# Nueva ruta para mostrar todo el contenido generado
+@app.route('/api/mostrar_contenido', methods=['GET'])
+def mostrar_contenido():
+    if 'user_id' in session:
+        # Llamar a las APIs para obtener contenido
+        contenido_educacion = requests.post('http://localhost:5000/api/generar-contenido-educacion', json={'input': 'Tema de ejemplo'}).json()
+        contenido_psicologia = requests.post('http://localhost:5000/api/generar-contenido-psicologia', json={'input': 'Tema de ejemplo'}).json()
+        
+        return render_template('mostrar_contenido.html', contenido_educacion=contenido_educacion['response'], contenido_psicologia=contenido_psicologia['response'])
+    return redirect(url_for('login'))
+
 # Ruta para gestionar el perfil estudiantil
 @app.route('/perfil_estudiantil', methods=['GET', 'POST'])
 def perfil_estudiantil():
@@ -508,6 +519,19 @@ def recursos():
     # Obtener todos los recursos desde la base de datos
     recursos = Resource.query.all()
     return render_template('resources.html', recursos=recursos)
+
+# Nueva ruta para ver todos los recursos
+@app.route('/api/ver_recursos', methods=['GET'])
+def ver_recursos():
+    recursos = Resource.query.all()
+    return jsonify([{
+        'id': r.id,
+        'title': r.title,
+        'description': r.description,
+        'resource_type': r.resource_type,
+        'link': r.link,
+        'tags': r.tags
+    } for r in recursos])
 
 # Ruta para la página de gestión de tareas
 @app.route('/tasks')
@@ -1163,9 +1187,37 @@ def generar_recurso():
             tags=tema
         )
         db.session.add(new_resource)
+
+        # Aquí se agregarían los recursos de YouTube y Google Books
+        # Suponiendo que ya se tienen las respuestas de las APIs
+        youtube_resources = []  # Aquí se agregarían los recursos de YouTube
+        google_books_resources = []  # Aquí se agregarían los recursos de Google Books
+
+        # Ejemplo de cómo agregar recursos de YouTube
+        for item in youtube_resources:
+            new_youtube_resource = Resource(
+                title=item['title'],
+                description=item['description'],
+                resource_type='Video',
+                link=item['link'],
+                tags=tema
+            )
+            db.session.add(new_youtube_resource)
+
+        # Ejemplo de cómo agregar recursos de Google Books
+        for item in google_books_resources:
+            new_book_resource = Resource(
+                title=item['title'],
+                description=item['description'],
+                resource_type='Libro',
+                link=item['link'],
+                tags=tema
+            )
+            db.session.add(new_book_resource)
+
         db.session.commit()
 
-        return jsonify({'message': 'Recurso generado exitosamente', 'resource': {
+        return jsonify({'message': 'Recursos generados exitosamente', 'resource': {
             'title': resource_title,
             'description': resource_description,
             'link': resource_link,
