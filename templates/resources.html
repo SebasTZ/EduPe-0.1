@@ -6,12 +6,8 @@
 <section class="resource-section">
     <h1>Recursos Educativos</h1>
 
-    <!-- New buttons for API access -->
-    <div class="api-buttons">
-        <button id="gpt-btn" class="btn-api">Usar GPT</button>
-        <button id="youtube-btn" class="btn-api">Usar YouTube</button>
-        <button id="google-books-btn" class="btn-api">Usar Google Books</button>
-    </div>
+    <!-- Botón para abrir el formulario de creación de recursos -->
+    <button id="crear-recurso-btn" class="btn-crear-recurso">Generar Recurso Educativo</button>
 
     <!-- Modal para generar un recurso educativo -->
     <div id="recurso-modal" class="modal">
@@ -25,6 +21,22 @@
             </form>
         </div>
     </div>
+
+    <!-- Formulario de búsqueda de YouTube -->
+    <h2>Buscar Videos en YouTube</h2>
+    <form id="buscar-videos-form">
+        <input type="text" id="buscar-videos-input" placeholder="Ingrese el tema a buscar" required>
+        <button type="submit">Buscar</button>
+    </form>
+    <div id="youtube-results" class="youtube-results"></div>
+
+    <!-- Formulario de búsqueda de Google Books -->
+    <h2>Buscar Libros en Google Books</h2>
+    <form id="buscar-libros-form">
+        <input type="text" id="buscar-libros-input" placeholder="Ingrese el tema a buscar" required>
+        <button type="submit">Buscar</button>
+    </form>
+    <div id="google-books-results" class="google-books-results"></div>
 
     <!-- Aquí se muestran los recursos generados -->
     {% if recursos %}
@@ -79,18 +91,6 @@
     .btn-crear-recurso:hover {
         background-color: #218838;
     }
-    .btn-api {
-        margin-right: 10px;
-        padding: 10px 20px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        cursor: pointer;
-        border-radius: 5px;
-    }
-    .btn-api:hover {
-        background-color: #0056b3;
-    }
 
     /* Modal Styles */
     .modal {
@@ -128,9 +128,37 @@
     .btn-submit:hover {
         background-color: #0056b3;
     }
+
+    /* Results Styles */
+    .youtube-results, .google-books-results {
+        margin-top: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    .youtube-video, .google-book {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+        width: calc(33.33% - 10px); /* Tres columnas */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .youtube-video img, .google-book img {
+        max-width: 100%;
+        border-radius: 8px;
+    }
+    .youtube-video h3, .google-book h3 {
+        font-size: 1.1em;
+        margin: 10px 0;
+    }
+    .youtube-video a, .google-book a {
+        text-decoration: none;
+        color: #007bff;
+    }
+    .youtube-video a:hover, .google-book a:hover {
+        text-decoration: underline;
+    }
 </style>
-<<<<<<< HEAD
-=======
 
 <script>
     // Abrir y cerrar modal
@@ -146,135 +174,148 @@
         const tema = document.getElementById("tema").value;
 
         try {
-            const [gptResponse, educacionResponse, psicologiaResponse, youtubeResponse, booksResponse] = await Promise.all([
-                fetch("/api/generar-recurso", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ tema: tema })
-                }),
-                fetch("/api/generar-contenido-educacion", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ input: tema })
-                }),
-                fetch("/api/generar-contenido-psicologia", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ input: tema })
-                }),
-                fetch(`/api/youtube?query=${tema}`), // YouTube Data API
-                fetch(`/api/google-books?query=${tema}`) // Google Books API
-            ]);
+            const response = await fetch("/api/generar-recurso", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ tema: tema })
+            });
 
-            const [gptData, educacionData, psicologiaData, youtubeData, booksData] = await Promise.all([
-                gptResponse.json(),
-                educacionResponse.json(),
-                psicologiaResponse.json(),
-                youtubeResponse.json(),
-                booksResponse.json()
-            ]);
+            if (response.ok) { // Verifica que el status sea 200-299
+                const data = await response.json();
+                alert(data.message);
 
-            if (gptResponse.ok && educacionResponse.ok && psicologiaResponse.ok && youtubeResponse.ok && booksResponse.ok) {
-                alert("Recursos generados exitosamente.");
+                if (data.resource) {
+                    let listaRecursos = document.querySelector(".resource-list");
+                    if (!listaRecursos) {
+                        listaRecursos = document.createElement("ul");
+                        listaRecursos.className = "resource-list";
+                        document.querySelector(".resource-section").appendChild(listaRecursos);
+                    }
 
-                let listaRecursos = document.querySelector(".resource-list");
-                
-                if (!listaRecursos) {
-                    listaRecursos = document.createElement("ul");
-                    listaRecursos.className = "resource-list";
-                    document.querySelector(".resource-section").appendChild(listaRecursos);
-                }
-
-                const recursosGenerados = [
-                    { title: gptData.resource.title, description: gptData.resource.description, link: gptData.resource.link },
-                    { title: "Contenido Educativo", description: educacionData.response, link: "#" },
-                    { title: "Contenido Psicológico", description: psicologiaData.response, link: "#" },
-                    ...youtubeData.items.map(item => ({
-                        title: item.snippet.title,
-                        description: item.snippet.description,
-                        link: `https://www.youtube.com/watch?v=${item.id.videoId}`
-                    })),
-                    ...booksData.items.map(item => ({
-                        title: item.volumeInfo.title,
-                        description: item.volumeInfo.description || "Sin descripción disponible.",
-                        link: item.volumeInfo.infoLink
-                    }))
-                ];
-
-                recursosGenerados.forEach(recurso => {
                     const nuevoRecurso = document.createElement("li");
                     nuevoRecurso.innerHTML = `
-                        <h3>${recurso.title}</h3>
-                        <p>${recurso.description}</p>
-                        <a href="${recurso.link}" target="_blank">Acceder al recurso</a>
+                        <h3>${data.resource.title}</h3>
+                        <p>${data.resource.description}</p>
+                        <a href="${data.resource.link}" target="_blank">Acceder al recurso</a>
                     `;
                     listaRecursos.appendChild(nuevoRecurso);
-                });
-
-                cerrarModal();
+                    cerrarModal();
+                }
             } else {
-                alert("Hubo un error al generar los recursos.");
+                const errorData = await response.json();
+                alert(errorData.error || "Hubo un error al generar el recurso.");
             }
         } catch (error) {
-            alert("Hubo un error al generar los recursos.");
+            console.error("Error en la solicitud:", error);
+            alert("Hubo un error al generar el recurso.");
         }
     };
 
-    // Handle API button clicks
-    document.getElementById("gpt-btn").onclick = async function() {
-        const tema = document.getElementById("tema").value;
-        const response = await fetch("/api/generar-recurso", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ tema: tema })
+    document.addEventListener("DOMContentLoaded", () => {
+    const buscarForm = document.getElementById("buscar-videos-form");
+    const buscarInput = document.getElementById("buscar-videos-input");
+    const youtubeResults = document.getElementById("youtube-results");
+
+    buscarForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const query = buscarInput.value.trim();
+
+        if (!query) {
+            alert("Por favor, ingrese un término de búsqueda.");
+            return;
+        }
+
+        youtubeResults.innerHTML = "<p>Cargando resultados...</p>"; // Mensaje de carga
+
+        try {
+            const response = await fetch(`/buscar_youtube?query=${encodeURIComponent(query)}`);
+            if (response.ok) {
+                const data = await response.json();
+                renderYouTubeResults(data.videos);
+            } else {
+                youtubeResults.innerHTML = `<p>Error al buscar videos: ${response.statusText}</p>`;
+            }
+        } catch (error) {
+            console.error("Error al buscar videos:", error);
+            youtubeResults.innerHTML = "<p>Error inesperado al buscar videos.</p>";
+        }
+    };
+
+    function renderYouTubeResults(videos) {
+        if (!videos || videos.length === 0) {
+            youtubeResults.innerHTML = "<p>No se encontraron videos.</p>";
+            return;
+        }
+
+        youtubeResults.innerHTML = ""; // Limpiar resultados anteriores
+        videos.forEach(video => {
+            const videoDiv = document.createElement("div");
+            videoDiv.className = "youtube-video";
+
+            videoDiv.innerHTML = `
+                <img src="${video.thumbnail}" alt="${video.title}">
+                <h3>${video.title}</h3>
+                <p>${video.description}</p>
+                <a href="${video.link}" target="_blank">Ver en YouTube</a>
+            `;
+
+            youtubeResults.appendChild(videoDiv);
         });
-        const data = await response.json();
-        if (response.ok) {
-            alert("Recurso generado con éxito: " + data.resource.title);
-        } else {
-            alert("Error al generar recurso: " + data.error);
+    }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const buscarLibrosForm = document.getElementById("buscar-libros-form");
+    const buscarLibrosInput = document.getElementById("buscar-libros-input");
+    const googleBooksResults = document.getElementById("google-books-results");
+
+    buscarLibrosForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const query = buscarLibrosInput.value.trim();
+
+        if (!query) {
+            alert("Por favor, ingrese un término de búsqueda.");
+            return;
+        }
+
+        googleBooksResults.innerHTML = "<p>Cargando resultados...</p>"; // Mensaje de carga
+
+        try {
+            const response = await fetch(`/buscar_libros?query=${encodeURIComponent(query)}`);
+            if (response.ok) {
+                const data = await response.json();
+                renderGoogleBooksResults(data.books);
+            } else {
+                googleBooksResults.innerHTML = `<p>Error al buscar libros: ${response.statusText}</p>`;
+            }
+        } catch (error) {
+            console.error("Error al buscar libros:", error);
+            googleBooksResults.innerHTML = "<p>Error inesperado al buscar libros.</p>";
         }
     };
 
-    document.getElementById("youtube-btn").onclick = async function() {
-        const tema = document.getElementById("tema").value;
-        const response = await fetch(`/api/youtube?query=${tema}`);
-        const data = await response.json();
-        if (response.ok) {
-            data.items.forEach(item => {
-                const nuevoRecurso = document.createElement("li");
-                nuevoRecurso.innerHTML = `
-                    <h3>${item.snippet.title}</h3>
-                    <p>${item.snippet.description}</p>
-                    <a href="https://www.youtube.com/watch?v=${item.id.videoId}" target="_blank">Acceder al recurso</a>
-                `;
-                document.querySelector(".resource-list").appendChild(nuevoRecurso);
-            });
-            alert("Recursos de YouTube generados con éxito.");
-        } else {
-            alert("Error al obtener recursos de YouTube: " + data.error);
+    function renderGoogleBooksResults(books) {
+        if (!books || books.length === 0) {
+            googleBooksResults.innerHTML = "<p>No se encontraron libros.</p>";
+            return;
         }
-    };
 
-    document.getElementById("google-books-btn").onclick = async function() {
-        const tema = document.getElementById("tema").value;
-        const response = await fetch(`/api/google-books?query=${tema}`);
-        const data = await response.json();
-        if (response.ok) {
-            data.items.forEach(item => {
-                const nuevoRecurso = document.createElement("li");
-                nuevoRecurso.innerHTML = `
-                    <h3>${item.volumeInfo.title}</h3>
-                    <p>${item.volumeInfo.description || "Sin descripción disponible."}</p>
-                    <a href="${item.volumeInfo.infoLink}" target="_blank">Acceder al recurso</a>
-                `;
-                document.querySelector(".resource-list").appendChild(nuevoRecurso);
-            });
-            alert("Recursos de Google Books generados con éxito.");
-        } else {
-            alert("Error al obtener recursos de Google Books: " + data.error);
-        }
-    };
+        googleBooksResults.innerHTML = ""; // Limpiar resultados anteriores
+        books.forEach(book => {
+            const bookDiv = document.createElement("div");
+            bookDiv.className = "google-book";
+
+            bookDiv.innerHTML = `
+                ${book.thumbnail ? `<img src="${book.thumbnail}" alt="${book.title}">` : ''}
+                <h3>${book.title}</h3>
+                <p>${book.description}</p>
+                <a href="${book.link}" target="_blank">Ver en Google Books</a>
+            `;
+
+            googleBooksResults.appendChild(bookDiv);
+        });
+    }
+});
+
 </script>
->>>>>>> e85d449 (Mejora en la gestion de recursos)
 {% endblock %}

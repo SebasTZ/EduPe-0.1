@@ -1,9 +1,4 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
-from routes.psychology.PsychologyRoute import psychology_page
-from routes.wellbeing.WellbeingRoute import wellbeing_page
-from routes.selfesteem.SelfesteemRoute import selfesteem_page
-from routes.social.SocialRoute import social_page
-from routes.test.TestRoute import test_page
 from datetime import datetime, timedelta
 from notion_client import Client
 from dotenv import load_dotenv
@@ -25,14 +20,14 @@ app = Flask(__name__)
 load_dotenv()
 
 # Credenciales de la API de Notion
-NOTION_API_KEY = "ntn_K7795814785ay3XJxt84hO4XgmKtMpOa8GZmKFAUjyP4I2"
-DATABASE_ID = "12d1d0aab1818036a4a9d65630a65dbe"
+NOTION_API_KEY = os.getenv("NOTION_API_KEY")
+DATABASE_ID = os.getenv("NOTION_DATABASE_ID")
 
 # Set the secret key for sessions
 app.secret_key = 'your_secret_key'
 
 # OpenAI API Key
-openai.api_key = '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'
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # MySQL configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:Sebas3120@localhost/chatter_ai_db'
@@ -175,51 +170,6 @@ logging.basicConfig(level=logging.INFO)
 migrate = Migrate(app, db)
 
 # Rutas
-
-app.register_blueprint(psychology_page)
-app.register_blueprint(wellbeing_page)
-app.register_blueprint(selfesteem_page)
-app.register_blueprint(social_page)
-app.register_blueprint(test_page)
-
-def calcular_resultado(respuestas):
-    puntajes = {
-        "Nunca": 0,
-        "A veces": 10,
-        "Siempre": 20
-    }
-    
-    puntaje_total = sum(puntajes[respuesta] for respuesta in respuestas.values())
-    
-    if puntaje_total <= 70:
-        return {
-            "puntaje": puntaje_total,
-            "mensaje": "Necesitas mejorar. Considera implementar más estrategias para manejar el estrés.",
-            "nivel": "bajo"
-        }
-    elif puntaje_total <= 130:
-        return {
-            "puntaje": puntaje_total,
-            "mensaje": "Estás en el camino correcto, pero hay áreas que puedes mejorar.",
-            "nivel": "medio"
-        }
-    else:
-        return {
-            "puntaje": puntaje_total,
-            "mensaje": "Excelente, tienes buenas prácticas para gestionar el estrés y mantener tu bienestar emocional. ¡Sigue así!",
-            "nivel": "alto"
-        }
-
-@app.route('/submit-test', methods=['POST'])
-def submit_test():
-    respuestas = {str(i): request.form.get(f'question_{i}') 
-                 for i in range(1, 11)}
-    
-    print(respuestas)
-    
-    resultado = calcular_resultado(respuestas)
-    
-    return render_template('/pages/Resultado.html', resultado=resultado)
 
 @app.route('/')
 def home():
@@ -479,17 +429,6 @@ def generar_contenido_psicologia():
         print(f"Error al generar contenido psicológico: {e}")
         return jsonify({'response': 'Error al procesar la solicitud a la API.'}), 500
 
-# Nueva ruta para mostrar todo el contenido generado
-@app.route('/api/mostrar_contenido', methods=['GET'])
-def mostrar_contenido():
-    if 'user_id' in session:
-        # Llamar a las APIs para obtener contenido
-        contenido_educacion = requests.post('http://localhost:5000/api/generar-contenido-educacion', json={'input': 'Tema de ejemplo'}).json()
-        contenido_psicologia = requests.post('http://localhost:5000/api/generar-contenido-psicologia', json={'input': 'Tema de ejemplo'}).json()
-        
-        return render_template('mostrar_contenido.html', contenido_educacion=contenido_educacion['response'], contenido_psicologia=contenido_psicologia['response'])
-    return redirect(url_for('login'))
-
 # Ruta para gestionar el perfil estudiantil
 @app.route('/perfil_estudiantil', methods=['GET', 'POST'])
 def perfil_estudiantil():
@@ -569,19 +508,6 @@ def recursos():
     # Obtener todos los recursos desde la base de datos
     recursos = Resource.query.all()
     return render_template('resources.html', recursos=recursos)
-
-# Nueva ruta para ver todos los recursos
-@app.route('/api/ver_recursos', methods=['GET'])
-def ver_recursos():
-    recursos = Resource.query.all()
-    return jsonify([{
-        'id': r.id,
-        'title': r.title,
-        'description': r.description,
-        'resource_type': r.resource_type,
-        'link': r.link,
-        'tags': r.tags
-    } for r in recursos])
 
 # Ruta para la página de gestión de tareas
 @app.route('/tasks')
@@ -686,7 +612,8 @@ def completar_evaluacion_api(evaluacion_id):
     
     db.session.commit()
 
-    return jsonify({'nota': nota, 'mensaje': 'Evaluación completada con éxito.'})
+    # Redirigir a la página de feedback
+    return redirect(url_for('mostrar_feedback', evaluacion_id=evaluacion_id))
 
 @app.route('/api/retroalimentacion_reciente', methods=['GET'])
 def obtener_retroalimentacion():
@@ -1237,37 +1164,9 @@ def generar_recurso():
             tags=tema
         )
         db.session.add(new_resource)
-
-        # Aquí se agregarían los recursos de YouTube y Google Books
-        # Suponiendo que ya se tienen las respuestas de las APIs
-        youtube_resources = []  # Aquí se agregarían los recursos de YouTube
-        google_books_resources = []  # Aquí se agregarían los recursos de Google Books
-
-        # Ejemplo de cómo agregar recursos de YouTube
-        for item in youtube_resources:
-            new_youtube_resource = Resource(
-                title=item['title'],
-                description=item['description'],
-                resource_type='Video',
-                link=item['link'],
-                tags=tema
-            )
-            db.session.add(new_youtube_resource)
-
-        # Ejemplo de cómo agregar recursos de Google Books
-        for item in google_books_resources:
-            new_book_resource = Resource(
-                title=item['title'],
-                description=item['description'],
-                resource_type='Libro',
-                link=item['link'],
-                tags=tema
-            )
-            db.session.add(new_book_resource)
-
         db.session.commit()
 
-        return jsonify({'message': 'Recursos generados exitosamente', 'resource': {
+        return jsonify({'message': 'Recurso generado exitosamente', 'resource': {
             'title': resource_title,
             'description': resource_description,
             'link': resource_link,
@@ -1278,6 +1177,52 @@ def generar_recurso():
         print(f"Error al generar el recurso: {e}")
         return jsonify({'error': f'No se pudo generar el recurso: {str(e)}'}), 500
 
+@app.route('/buscar_youtube', methods=['GET'])
+def buscar_youtube():
+    query = request.args.get('query')
+    api_key = "AIzaSyDHQYr0BNu2sRGX0OvDQ8WTr2z-HleN4Aw"
+    url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&q={query}&type=video&key={api_key}"
+    
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()
+            videos = [{
+                'title': item['snippet']['title'],
+                'description': item['snippet']['description'],
+                'link': f"https://www.youtube.com/watch?v={item['id']['videoId']}",
+                'thumbnail': item['snippet']['thumbnails']['default']['url']
+            } for item in data.get('items', [])]
+
+            return jsonify({'videos': videos}), 200
+        else:
+            return jsonify({'error': 'Error en la API de YouTube'}), response.status_code
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/buscar_libros', methods=['GET'])
+def buscar_libros():
+    query = request.args.get('query')
+    api_key = "AIzaSyDHQYr0BNu2sRGX0OvDQ8WTr2z-HleN4Aw"
+    url = f"https://www.googleapis.com/books/v1/volumes?q={query}&key={api_key}"
+    
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()
+            books = [{
+                'title': item['volumeInfo'].get('title', 'Sin título'),
+                'description': item['volumeInfo'].get('description', 'Sin descripción'),
+                'thumbnail': item['volumeInfo']['imageLinks']['thumbnail'] if 'imageLinks' in item['volumeInfo'] else None,
+                'link': item['volumeInfo'].get('infoLink', '#')
+            } for item in data.get('items', [])]
+
+            return jsonify({'books': books}), 200
+        else:
+            return jsonify({'error': f"Error en la API de Google Books: {response.status_code}"}), response.status_code
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
 # Iniciar la aplicación Flask
 if __name__ == '__main__':
     app.run(debug=True)
