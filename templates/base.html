@@ -18,7 +18,7 @@
     <nav>
         <ul>
             <li><a href="{{ url_for('educacion') }}" class="{% if request.path == '/educacion' %}active{% endif %}">Educación</a></li>
-            <li><a href="{{ url_for('psicologia') }}" class="{% if request.path == '/psicologia' %}active{% endif %}">Psicología</a></li>
+            <li><a href="{{ url_for('psychology_page.Psychology') }}" class="{% if request.path == 'psychology_page.Psychology' %}active{% endif %}">Psicología</a></li>
             <li><a href="{{ url_for('chat') }}" class="{% if request.path == '/chat' %}active{% endif %}">Chat EduPe</a></li>
         </ul>
     </nav>
