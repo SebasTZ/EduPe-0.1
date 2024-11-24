@@ -1,0 +1,122 @@
+{% extends '/layout/Layout.html' %}
+
+{% block style %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/PsychologyStyle.css')}}"/>
+{% endblock %}
+
+{% block main %}
+  <article class="presentation-container">
+    <section class="presentation-content">
+        <h1>Apoyo psicológico para adolescentes</h1>
+        <p class="paragraph">Encuentra herramientas que te ayuden a mejorar tu bienestar emocional y tu rendimiento en los estudios.</p>
+    </section>
+    <section class="presentation-img">
+        <img src="../../../static/img/ilustrations/Psychologist-amico.svg" alt="presentation-img">
+    </section>
+    <section class="separator-bottom">
+      <svg
+          preserveAspectRatio="none"
+          viewBox="0 0 1200 120"
+          xmlns="http://www.w3.org/2000/svg"
+          style="fill: #ffffff; width: 100%; height: 96px; transform: rotate(180deg)"
+        >
+          <path d="M321.39 56.44c58-10.79 114.16-30.13 172-41.86 82.39-16.72 168.19-17.73 250.45-.39C823.78 31 906.67 72 985.66 92.83c70.05 18.48 146.53 26.09 214.34 3V0H0v27.35a600.21 600.21 0 00321.39 29.09z" />
+      </svg>
+    </section>
+  </article>
+  <article class="article-container">
+    <section class="article-img">
+      <img src="../../../static/img/ilustrations/Teenager-pana.svg" alt="teen-img">
+    </section>
+    <section class="article-content">
+      <h1 class="title-secondary">Psicología adolescente</h1>
+      <p class="paragraph">La adolescencia es una etapa de grandes cambios emocionales y físicos. <br/> Te ayudaremos a comprender y manejar tus emociones, fortalecer tu autoestima y mejorar tus relaciones.  <br/>Encuentra herramientas y recursos diseñados para apoyarte en tu desarrollo personal, todo en un espacio seguro y pensado para ti.</p>
+    </section>
+  </article>
+  <article class="health-container">
+    <section class="separator-top">
+      <svg
+        preserveAspectRatio="none"
+        viewBox="0 0 1200 120"
+        xmlns="http://www.w3.org/2000/svg"
+        style="fill: #ffffff; width: 133%; height: 96px;"
+      >
+        <path d="M321.39 56.44c58-10.79 114.16-30.13 172-41.86 82.39-16.72 168.19-17.73 250.45-.39C823.78 31 906.67 72 985.66 92.83c70.05 18.48 146.53 26.09 214.34 3V0H0v27.35a600.21 600.21 0 00321.39 29.09z" />
+      </svg>
+    </section>
+    <section class="health-content">
+      <div>
+        <div class="health-card">
+          <h1 class="title-secondary title-health">Bienestar Emocional</h1>
+          <img src="../../../static/img/ilustrations/Mental health-bro.svg" alt="img-bienestar">
+            <a href="{{url_for('wellbeing_page.Wellbeing')}}" class="button-secondary"><span>Descrubir</span></a>
+        </div>
+        <div class="health-card">
+          <h1 class="title-secondary title-health">Autoestima</h1>
+          <img src="../../../static/img/ilustrations/Self confidence-amico.svg" alt="img-autoestima">
+          <a href="{{url_for('selfesteem_page.Selfesteem')}}" class="button-secondary"><span>Descrubir</span></a>
+        </div>
+        <div class="health-card">
+          <h1 class="title-secondary title-health">Relaciones Sociales</h1>
+          <img src="../../../static/img/ilustrations/Ethnic friendship-rafiki.svg" alt="img-relaciones">
+            <a href="{{url_for('social_page.Social')}}" class="button-secondary"><span>Descrubir</span></a>
+        </div>
+        </div>
+      </div>
+    </section>
+    <section class="separator-bottom">
+      <svg
+          preserveAspectRatio="none"
+          viewBox="0 0 1200 120"
+          xmlns="http://www.w3.org/2000/svg"
+          style="fill: #ffffff; width: 100%; height: 96px; transform: rotate(180deg)"
+        >
+          <path d="M321.39 56.44c58-10.79 114.16-30.13 172-41.86 82.39-16.72 168.19-17.73 250.45-.39C823.78 31 906.67 72 985.66 92.83c70.05 18.48 146.53 26.09 214.34 3V0H0v27.35a600.21 600.21 0 00321.39 29.09z" />
+      </svg>
+    </section>
+  </article>
+  <article class="article-container">
+    <section class="article-content">
+      <h1 class="title-secondary">Claves para Evitar el Estrés en los Estudiantes y Mejorar su Bienestar Académico</h1>
+      <p class="paragraph">Para evitar el estrés en los estudiantes, es fundamental que aprendan a manejar sus responsabilidades académicas y personales de manera equilibrada. Aquí hay algunas estrategias clave para reducir el estrés</p>
+      <a href="/test" class="button-secondary">
+        <span>Empezar Test</span>
+      </a>
+    </section>
+    <section class="article-img">
+      <img src="../../../static/img/ilustrations/Stress-rafiki.svg" alt="teen-img">
+    </section>
+  </article>
+  <article class="cards-container">
+    <h1 class="title-secondary">"Reducir Estrés y Mejorar Rendimiento"</h1>
+    <p>Implementar estas estrategias puede ayudar a los estudiantes a manejar mejor las exigencias académicas y a mantener su bienestar emocional, reduciendo los niveles de estrés y mejorando su rendimiento general.</p>
+    <section class="card-content">
+      <div class="card-first">
+        <div class="card card-1">
+          <h3>Desconexión tecnológica</h3>
+          <p>Menos tiempo en pantallas reduce la fatiga mental.</p>
+        </div>
+        <div class="card card-5">
+          <h3>Planificación del tiempo</h3>
+          <p>Relaciones positivas y compartir preocupaciones alivian el estrés.</p>
+        </div>
+      </div>
+      <div class="card-second">
+        <div class="card card-2">
+          <h3>Técnicas de relajación</h3>
+          <p>Practicar respiración profunda, meditación o mindfulness.</p>
+        </div>
+        <div class="card card-4">
+          <h3>Ejercicio físico</h3>
+          <p>Incluir actividad física regular para liberar tensiones y mejorar el estado de ánimo.</p>
+        </div>
+      </div>
+      <div class="card-third">
+        <div class="card card-3">
+          <h3>Planificación del tiempo</h3>
+          <p>Establecer horarios de estudio y descanso para evitar la sobrecarga.</p>
+        </div>
+      </div>
+    </section>
+  </article>
+{% endblock %}

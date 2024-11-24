@@ -1,0 +1,9 @@
+<div class="question">
+    <p>{{ question.id + ". " + question.text }}</p>
+    {% for option in options %}
+        <label>
+            <input type="radio" id="question_{{ question.id }}" value="{{ option }}" name="question_{{ question.id }}"/>
+            <span>{{ option }}</span>
+        </label>
+    {% endfor %}
+</div>

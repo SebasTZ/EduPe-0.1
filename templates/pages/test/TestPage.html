@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychology</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/LayoutStyle.css')}}"/>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.png')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/TestStyle.css')}}"/>
+</head>
+<body>
+    <header>
+        <section class="logo-container">
+            <img src="{{ url_for('static', filename='favicon.png')}}" alt="Logo">
+        </section>
+        <nav class="menu-container">
+            <ul>
+                <li>
+                    <a href="{{url_for('psychology_page.Psychology')}}" class="link {{'active' if request.endpoint == 'psychology_page.Psychology'}}">Psicología</a>
+                </li>
+                <li>
+                    <a href="{{url_for('wellbeing_page.Wellbeing')}}" class="link {{'active' if request.endpoint == 'wellbeing_page.Wellbeing'}}">Bienestar emocional</a>
+                </li>
+                <li>
+                    <a href="{{url_for('selfesteem_page.Selfesteem')}}" class="link {{'active' if request.endpoint == 'selfesteem_page.Selfesteem'}}">Autoestima</a>
+                </li>
+                <li>
+                    <a href="{{url_for('social_page.Social')}}" class="link {{'active' if request.endpoint == 'social_page.Social'}}">Relaciones sociales</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+      <article class="presentation-container">
+        <section class="presentation-content">
+            <h1>Test de Estrategias para Evitar el Estrés</h1>
+        </section>
+        <section class="presentation-img">
+            <img src="../../../static/img/ilustrations/test.png" alt="presentation-img">
+        </section>
+        <section class="separator-bottom">
+          <svg
+              preserveAspectRatio="none"
+              viewBox="0 0 1200 120"
+              xmlns="http://www.w3.org/2000/svg"
+              style="fill: #ffffff; width: 100%; height: 96px; transform: rotate(180deg)"
+            >
+              <path d="M321.39 56.44c58-10.79 114.16-30.13 172-41.86 82.39-16.72 168.19-17.73 250.45-.39C823.78 31 906.67 72 985.66 92.83c70.05 18.48 146.53 26.09 214.34 3V0H0v27.35a600.21 600.21 0 00321.39 29.09z" />
+          </svg>
+        </section>
+      </article>
+      <article class="test-container">
+        <form name="test-form" class="test" action="/submit-test" method="POST">
+          {% set questions = [
+              {"id": "1", "text": "¿Planificas tu tiempo de estudio con un horario que incluya períodos de descanso?"},
+              {"id": "2", "text": "¿Utilizas herramientas como agendas o aplicaciones para organizar tus tareas?"},
+              {"id": "3", "text": "¿Practicas ejercicios de respiración o meditación regularmente?"},
+              {"id": "4", "text": "¿Utilizas técnicas de relajación antes de exámenes o presentaciones?"},
+              {"id": "5", "text": "¿Dedicas tiempo a actividades recreativas o deportes?"},
+              {"id": "6", "text": "¿Encuentras tiempo para socializar con amigos fuera del estudio?"},
+              {"id": "7", "text": "¿Te sientes cómodo compartiendo tus preocupaciones con amigos o familiares?"},
+              {"id": "8", "text": "¿Buscas apoyo emocional cuando te sientes abrumado?"},
+              {"id": "9", "text": "¿Te tomas tiempo para reflexionar sobre tus emociones y necesidades?"},
+              {"id": "10", "text": "¿Reconoces cuándo necesitas un descanso o apoyo adicional?"}
+          ] %}
+    
+          {% for question in questions %}
+              {% with options = ["Nunca", "A veces", "Siempre"] %}
+                  {% include '/components/Question.html' %}
+              {% endwith %}
+          {% endfor %}
+          <button type="submit" class="button-secondary">Enviar</button>
+        </form>
+        <a href="/psychology" class="button-secondary">
+          <span>Volver</span>
+        </a>
+      </article>
+    </main>
+    <footer>
+        <section class="separator-footer">
+            <svg
+            preserveAspectRatio="none"
+            viewBox="0 0 1200 120"
+            xmlns="http://www.w3.org/2000/svg"
+            style="fill: #FD749B; width: 140%; height: 320px; transform: rotate(180deg);"
+          >
+            <path d="M321.39 56.44c58-10.79 114.16-30.13 172-41.86 82.39-16.72 168.19-17.73 250.45-.39C823.78 31 906.67 72 985.66 92.83c70.05 18.48 146.53 26.09 214.34 3V0H0v27.35a600.21 600.21 0 00321.39 29.09z" />
+          </svg>
+          </section>
+    </footer>
+    <script src="{{ url_for('static', filename='js/stickyHeader.js')}}"></script>
+    <script>
+      document.querySelector('.test').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const preguntasFaltantes = [];
+        for (let i = 1; i <= 10; i++){
+          var q = document.forms["test-form"][`question_${i}`];
+          if (q[0].checked==false && q[1].checked==false && q[2].checked==false){
+            preguntasFaltantes.push(i);
+          }
+        }
+        if(preguntasFaltantes.length > 0){
+          const mensaje = `Por favor, responde las siguientes preguntas:\n${preguntasFaltantes.map(num => '- Pregunta ' + num).join('\n')}`;
+          alert(mensaje);
+        }else{
+          this.submit()
+        }
+      })
+    </script>
+</body>
+</html>

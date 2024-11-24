@@ -1,0 +1,56 @@
+{% extends '/layout/Layout.html' %}
+
+{% block style %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/SelfesteemStyle.css')}}"/>
+{% endblock %}
+
+{% block main %}
+  <article class="presentation-container">
+    <section class="presentation-content">
+        <h1>Autoestima</h1>
+        <p class="paragraph">El autoestima juega un papel fundamental en el desarrollo emocional y social, ya que es una etapa en la que los jóvenes están formando su identidad y buscando aceptación tanto en su entorno como en ellos mismos.</p>
+    </section>
+    <section class="presentation-img">
+        <img src="{{ url_for('static', filename='img/ilustrations/Self confidence-amico.svg')}}" alt="presentation-img">
+    </section>
+    <section class="separator-bottom">
+      <svg
+          preserveAspectRatio="none"
+          viewBox="0 0 1200 120"
+          xmlns="http://www.w3.org/2000/svg"
+          style="fill: #ffffff; width: 100%; height: 96px; transform: rotate(180deg)"
+        >
+          <path d="M321.39 56.44c58-10.79 114.16-30.13 172-41.86 82.39-16.72 168.19-17.73 250.45-.39C823.78 31 906.67 72 985.66 92.83c70.05 18.48 146.53 26.09 214.34 3V0H0v27.35a600.21 600.21 0 00321.39 29.09z" />
+      </svg>
+    </section>
+  </article>
+  <article class="selfesteem-container">
+    <figure class="img-container">
+      <img src="{{ url_for('static', filename='img/article/image-1.png')}}" alt="img-1">
+    </figure>
+    <div class="selfesteem-content">
+      <h2 class="title-secondary">Algunos aspectos importantes de la autoestima incluyen</h2>
+      <p>Un  aspecto importante es la confianza en sí mismo, que es la creencia de que son capaces de enfrentar retos, tomar decisiones y lograr metas. Los adolescentes con una autoestima saludable tienden a sentirse más seguros y capaces de superar dificultades. Junto a esto, está la autovaloración, que es la capacidad de reconocer su valor personal, sin depender de la aprobación de los demás.</p>
+    </div>
+    </article>
+  <article class="selfesteem-container">
+    <figure class="img-container">
+      <img src="{{ url_for('static', filename='img/article/image-2.jfif')}}" alt="img-2">
+    </figure>
+    <div class="selfesteem-content">
+      <h2 class="title-secondary">Confianza en sí mismo</h2>
+      <p> Es la creencia en la capacidad de enfrentar retos y lograr metas. Una autoestima positiva refuerza la seguridad personal, permitiendo a los adolescentes tomar decisiones saludables y superar dificultades con mayor resiliencia.</p>
+    </div>
+  </article>
+  </article>
+  <article class="selfesteem-container">
+    <figure class="img-container">
+      <img src="{{ url_for('static', filename='img/article/image-3.jfif')}}" alt="img-3">
+    </figure>
+    <div class="selfesteem-content">
+      <h2 class="title-secondary">Autovaloración</h2>
+      <p>Se refiere al sentido de valor personal que el adolescente tiene de sí mismo, independiente de la aprobación de los demás. Una autovaloración fuerte les permite reconocer sus fortalezas y aceptarse con sus debilidades, lo que fomenta un desarrollo emocional equilibrado.</p>
+    </div>
+    </article>
+  </article>
+{% endblock %}

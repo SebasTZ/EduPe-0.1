@@ -1,0 +1,65 @@
+{% extends '/layout/Layout.html' %}
+
+{% block style %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/WellbeingStyle.css')}}"/>
+{% endblock %}
+
+{% block main %}
+  <article class="presentation-container">
+    <section class="presentation-content">
+        <h1>Bienestar Emocional</h1>
+        <p class="paragraph">Es crucial para el desarrollo integral de los jóvenes, ya que en esta etapa enfrentan grandes cambios.</p>
+    </section>
+    <section class="presentation-img">
+        <img src="../../../static/img/ilustrations/Mental health-bro.svg" alt="presentation-img">
+    </section>
+    <section class="separator-bottom">
+      <svg
+          preserveAspectRatio="none"
+          viewBox="0 0 1200 120"
+          xmlns="http://www.w3.org/2000/svg"
+          style="fill: #ffffff; width: 100%; height: 96px; transform: rotate(180deg)"
+        >
+          <path d="M321.39 56.44c58-10.79 114.16-30.13 172-41.86 82.39-16.72 168.19-17.73 250.45-.39C823.78 31 906.67 72 985.66 92.83c70.05 18.48 146.53 26.09 214.34 3V0H0v27.35a600.21 600.21 0 00321.39 29.09z" />
+      </svg>
+    </section>
+  </article>
+  <article class="text-container">
+    <p>“Te ofrecemos recursos para que aprendas a manejar el estrés, la ansiedad y las emociones intensas propias de esta etapa. Descubre cómo sentirte más seguro de ti mismo y lograr un equilibrio emocional para enfrentar los desafíos del día a día”</p>
+  </article>
+  <article class="card-container">
+    <figure class="img-container">
+      <img src="{{ url_for('static', filename='img/ilustrations/elegir.jfif')}}" alt="elegir">
+    </figure>
+    <div class="card-content">
+      <h2 class="title-secondary">Entre los 12 y 16 años, los adolescentes suelen experimentar</h2>
+      <p> Los altibajos emocionales son comunes debido a los cambios hormonales y a las presiones sociales.La presión académica, las expectativas sociales y la búsqueda de identidad pueden generar tensión emocional.Muchos adolescentes se sienten inseguros sobre su apariencia, habilidades o relaciones, lo que afecta su bienestar.</p>
+    </div>
+    </article>
+  </article>
+  <article class="wellbing-container">
+    <h3 class="title-secondary">El bienestar emocional ayuda a los adolescentes</h3>
+    <section class="wellbing-content">
+      <div class="wellbing-column column-1">
+        <div class="wellbing-card">
+          <h4>Gestionar el estrés</h4>
+          <p>Aprender técnicas de relajación y mindfulness para controlar la ansiedad y las preocupaciones.</p>
+        </div>
+        <div></div>
+        <div class="wellbing-card">
+          <h4>Tomar decisiones conscientes</h4>
+          <p>Promover la autorregulación emocional para actuar de manera más reflexiva en situaciones de presión.</p>
+        </div>
+      </div>
+      <div></div>
+      <div class="wellbing-column column-2">
+        <div></div>
+        <div class="wellbing-card">
+          <h4>Mejorar la autoestima</h4>
+          <p>Desarrollar una imagen positiva de sí mismos y aprender a valorarse más allá de las comparaciones sociales.</p>
+        </div>
+        <div></div>
+      </div>     
+    </section>
+  </article>
+{% endblock %}
