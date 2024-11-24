@@ -1,0 +1,45 @@
+.article-container{
+    margin: 6rem 15%;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+
+    justify-content: center;
+    align-items: center;
+
+    & > p{
+        text-align: center;
+        font-size: 1.1rem;
+        font-style: italic;
+    }
+}
+
+.card-container{
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+}
+
+.card{
+    border: solid;
+    border-width: 1px;
+    border-color: #D1D1D1;
+    border-radius: 1rem;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.card-title-1{
+    color: #9E7EDD;
+}
+.card-title-2{
+    color: #F53E6A;
+}
+.card-title-3{
+    color: #FF8000;
+}
+.card-title-4{
+    color: #281AC8;
+}

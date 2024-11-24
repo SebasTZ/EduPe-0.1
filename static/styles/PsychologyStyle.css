@@ -1,0 +1,168 @@
+/* Adolescent Psychology */
+
+.article-container{
+    background: white;
+    padding: 6rem 15%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 4rem;
+}
+
+.article-img{
+    display: flex;
+    justify-content: center;
+    img{
+        width: 450px;
+    }
+}
+
+.article-content{
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 2rem ;
+    
+    p{
+        color: #333333;
+    }
+}
+
+/* Health */
+
+.health-container{
+    position: relative;
+    background: rgb(253,116,155);
+    background: linear-gradient(180deg, rgba(253,116,155,1) 0%, rgba(40,26,200,1) 100%);
+}
+
+.health-content{
+    padding: 12rem 15%;
+
+    & > div{
+        padding: 3rem;
+        border-radius: 2rem;
+        background-color: white;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 3rem;
+    }
+}
+
+.health-card{
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+
+    img{
+        width: 20rem;
+    }
+}
+
+.title-health{
+    font-size: 1.2rem;
+
+    &::before{
+        height: 4px;
+    }
+}
+
+/* Cards */
+.cards-container{
+    padding: 6rem 15%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 4rem;
+}
+
+.card-content{
+    position: relative;
+    width: 100%;
+    height: 14rem;
+}
+
+.card{
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    h3{
+        font-size: 1.1rem;
+    }
+    p{
+        font-size: 1rem;
+        font-style: italic;
+    }
+}
+
+.card-first{
+    position: absolute;
+    width: 100%;
+    left: 0;
+    right: 0;
+    top: 0;
+    background-color: #9E7EDD;
+    border-radius: 1rem;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 8px 24px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    height: 10rem;
+}
+
+.card-second{
+    position: absolute;
+    width: 60%;
+    left: 20%;
+    top: -1rem;
+    background-color: #73B0FF;
+    border-radius: 1rem;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 8px 24px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    height: 12rem;
+}
+
+.card-third{
+    position: absolute;
+    width: 20%;
+    left: 40%;
+    top: -2rem;
+    background-color: #FD749B;
+    border-radius: 1rem;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 8px 24px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    height: 14rem;
+}
+
+.card-1{
+    width: 20%;
+}
+
+.card-5{
+    width: 20%;
+}
+
+.card-2{
+    width: calc(100%/3);
+}
+
+.card-4{
+    width: calc(100%/3);
+}
