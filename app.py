@@ -25,7 +25,7 @@ pymysql.install_as_MySQLdb()
 
 app = Flask(__name__)
 # Cargar variables de entorno
-load_dotenv()
+load_dotenv('api.env')
 
 # Credenciales de la API de Notion
 NOTION_API_KEY = os.getenv("NOTION_API_KEY")
@@ -36,6 +36,11 @@ app.secret_key = 'your_secret_key'
 
 # OpenAI API Key
 openai.api_key = os.getenv("OPENAI_API_KEY")
+# YouTube API Key
+YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
+
+# Google Books API Key
+GOOGLE_BOOKS_API_KEY = os.getenv("GOOGLE_BOOKS_API_KEY")
 
 # MySQL configuration
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:Sebas3120@localhost/chatter_ai_db'
@@ -146,6 +151,7 @@ class Feedback(db.Model):
     def __repr__(self):
         return f"<Feedback(id={self.id}, evaluacion_id={self.evaluacion_id}, user_id={self.user_id}, nota={self.nota})>"
 
+# Modelo de Preguntas
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     evaluation_id = db.Column(db.Integer, db.ForeignKey('evaluation.id'), nullable=False)
@@ -240,6 +246,7 @@ def home():
         return redirect(url_for('educacion'))  # Redirect to the education page if logged in
     return redirect(url_for('login'))  # Redirect to login if no active session
 
+# Ruta para el login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -262,6 +269,7 @@ def login():
 
     return render_template('login.html')
 
+# Ruta para el registro
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -285,6 +293,7 @@ def register():
 
     return render_template('register.html')
 
+# Ruta para el logout
 @app.route('/logout')
 def logout():
     session.pop('user', None)
@@ -465,6 +474,7 @@ def generar_contenido_educacion():
         print(f"Error al generar contenido educativo: {e}")
         return jsonify({'response': 'Error al procesar la solicitud a la API.'}), 500
 
+# API para generar contenido psicológico
 @app.route('/api/generar-contenido-psicologia', methods=['POST'])
 def generar_contenido_psicologia():
     try:
@@ -643,13 +653,13 @@ def completar_evaluacion(id):
 # API para completar una evaluación
 @app.route('/api/completar_evaluacion/<int:evaluacion_id>', methods=['POST'])
 def completar_evaluacion_api(evaluacion_id):
-    usuario_id = request.json.get('usuario_id', 0)
+    user_id = request.json.get('user_id', 0)
     respuestas = request.json.get('respuestas', [])
 
     # Guardar cada respuesta del usuario
     for respuesta in respuestas:
         nueva_respuesta = Answer(
-            user_id=usuario_id,
+            user_id=user_id,
             question_id=respuesta['question_id'],
             respuesta_usuario=respuesta['respuesta_usuario'],
             correcta=(respuesta['respuesta_usuario'] == respuesta['correcta'])
@@ -660,14 +670,14 @@ def completar_evaluacion_api(evaluacion_id):
     correctas = sum(1 for respuesta in respuestas if respuesta['respuesta_usuario'] == respuesta['correcta'])
     nota = (correctas / len(respuestas)) * 10 if respuestas else 0
 
-    feedback = Feedback.query.filter_by(evaluacion_id=evaluacion_id, user_id=usuario_id).first()
+    feedback = Feedback.query.filter_by(evaluacion_id=evaluacion_id, user_id=user_id).first()
     if feedback:
         feedback.nota = nota
         feedback.comentarios = f"Obtuviste {correctas} de {len(respuestas)} preguntas correctas."
     else:
         feedback = Feedback(
             evaluacion_id=evaluacion_id,
-            user_id=usuario_id,
+            user_id=user_id,
             nota=nota,
             comentarios=f"Obtuviste {correctas} de {len(respuestas)} preguntas correctas."
         )
@@ -678,10 +688,11 @@ def completar_evaluacion_api(evaluacion_id):
     # Redirigir a la página de feedback
     return redirect(url_for('mostrar_feedback', evaluacion_id=evaluacion_id))
 
+# API para obtener retroalimentaciones recientes
 @app.route('/api/retroalimentacion_reciente', methods=['GET'])
 def obtener_retroalimentacion():
-    usuario_id = request.args.get('usuario_id', 0)  # Filtrar por usuario si es necesario
-    retroalimentacion = Feedback.query.filter_by(usuario_id=usuario_id).all()
+    user_id = request.args.get('user_id', 0)  # Filtrar por usuario si es necesario
+    retroalimentacion = Feedback.query.filter_by(user_id=user_id).all()
     return jsonify([{
         'evaluacion': fb.evaluacion.nombre,
         'comentarios': fb.comentarios,
@@ -814,6 +825,7 @@ def enviar_respuestas(evaluacion_id):
 
     return jsonify({'mensaje': 'Evaluación completada.', 'nota': nota, 'correctas': correctas, 'total_preguntas': total_preguntas})
 
+# Función para calcular la nota de la evaluación
 def calcular_nota(correctas, total_preguntas):
     """Calcula la nota en base a respuestas correctas y total de preguntas."""
     if total_preguntas == 0:
@@ -829,7 +841,7 @@ def generar_retroalimentacion(evaluacion_id):
         return jsonify({'error': 'Evaluación no encontrada.'}), 404
 
     # Calcular el número de respuestas correctas y el total de preguntas
-    correctas = sum(1 for pregunta in evaluacion.questions if pregunta.respuesta_correcta)
+    correctas = sum(1 for pregunta in evaluacion.questions if pregunta.correcta)
     total_preguntas = len(evaluacion.questions)
     nota = calcular_nota(correctas, total_preguntas)
 
@@ -901,7 +913,7 @@ def mostrar_feedback(evaluacion_id):
         return jsonify({'feedback': 'No autorizado.'}), 401
 
     # Obtener la evaluación y el feedback asociado
-    evaluacion = db.session.get(Evaluation, evaluacion_id)
+    evaluacion = db.session.query(Evaluation).filter_by(id=evaluacion_id).first()
     feedback = Feedback.query.filter_by(evaluacion_id=evaluacion_id, user_id=session['user_id']).first()
 
     if not evaluacion or not feedback:
@@ -910,6 +922,7 @@ def mostrar_feedback(evaluacion_id):
     # Renderiza la plantilla con la evaluación y el feedback
     return render_template('mostrar_feedback.html', evaluacion=evaluacion, feedback=feedback)
 
+# API para obtener el historial de chat
 @app.route('/api/chat-history', methods=['GET'])
 def get_chat_history():
     if 'user_id' in session:
@@ -919,6 +932,7 @@ def get_chat_history():
     else:
         return jsonify({'error': 'No autorizado.'}), 401
 
+# Ruta para editar el perfil educativo
 @app.route('/editar_perfil_educativo', methods=['GET', 'POST'])
 def editar_perfil_educativo():
     if 'user_id' in session:
@@ -971,6 +985,7 @@ def nueva_tarea_form():
     
     return render_template('nueva_tarea.html')
 
+# Función para agregar una tarea a Notion
 def agregar_tarea(title, description, due_date, priority, status):
     url = f"https://api.notion.com/v1/pages"
     headers = {
@@ -1027,6 +1042,7 @@ def obtener_tareas():
         print(f"Error al conectar con Notion: {response.status_code}")
         return []
 
+# Función para obtener una tarea específica de Notion
 def obtener_tarea_por_id(task_id):
     url = f"https://api.notion.com/v1/pages/{task_id}"
     headers = {
@@ -1052,6 +1068,7 @@ def obtener_tarea_por_id(task_id):
         print(f"Error al obtener la tarea de Notion: {response.status_code}")
         return None
 
+# Función para actualizar una tarea en Notion
 def actualizar_tarea(task_id, title, description, due_date, priority, status):
     url = f"https://api.notion.com/v1/pages/{task_id}"
     headers = {
@@ -1095,6 +1112,7 @@ def editar_tarea(task_id):
     tarea = obtener_tarea_por_id(task_id)
     return render_template('editar_tarea.html', tarea=tarea)
 
+# Ruta para eliminar una tarea
 @app.route('/eliminar_tarea/<string:task_id>', methods=['POST'])
 def eliminar_tarea(task_id):
     url = f"https://api.notion.com/v1/blocks/{task_id}"
@@ -1111,6 +1129,7 @@ def eliminar_tarea(task_id):
     
     return redirect(url_for('mostrar_tareas'))
 
+# API para obtener todos los recursos
 @app.route('/api/recursos', methods=['GET'])
 def obtener_recursos():
     recursos = Resource.query.all()
@@ -1124,6 +1143,7 @@ def obtener_recursos():
     } for r in recursos]
     return jsonify(recursos_json)
 
+# API para actualizar un recurso
 @app.route('/api/recurso/<int:id>', methods=['PUT'])
 def actualizar_recurso(id):
     data = request.get_json()
@@ -1141,6 +1161,7 @@ def actualizar_recurso(id):
     db.session.commit()
     return jsonify({'message': 'Recurso actualizado exitosamente.'})
 
+# API para eliminar un recurso
 @app.route('/api/recurso/<int:id>', methods=['DELETE'])
 def eliminar_recurso(id):
     recurso = Resource.query.get(id)
@@ -1163,6 +1184,7 @@ def parse_resource_data(contenido):
         'tags': 'educación, ciencia'  # Etiquetas opcionales
     }
 
+# API para buscar recursos
 @app.route('/api/buscar-recursos', methods=['GET'])
 def buscar_recursos():
     tema = request.args.get('tema')
@@ -1240,6 +1262,7 @@ def generar_recurso():
         print(f"Error al generar el recurso: {e}")
         return jsonify({'error': f'No se pudo generar el recurso: {str(e)}'}), 500
 
+# Ruta para buscar videos en YouTube
 @app.route('/buscar_youtube', methods=['GET'])
 def buscar_youtube():
     query = request.args.get('query')
@@ -1263,6 +1286,7 @@ def buscar_youtube():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+# Ruta para buscar libros en Google Books
 @app.route('/buscar_libros', methods=['GET'])
 def buscar_libros():
     query = request.args.get('query')
