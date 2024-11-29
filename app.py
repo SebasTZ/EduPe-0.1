@@ -1180,7 +1180,7 @@ def generar_recurso():
 @app.route('/buscar_youtube', methods=['GET'])
 def buscar_youtube():
     query = request.args.get('query')
-    api_key = "AIzaSyDHQYr0BNu2sRGX0OvDQ8WTr2z-HleN4Aw"
+    api_key = os.getenv('YOUTUBE_API_KEY')
     url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&q={query}&type=video&key={api_key}"
     
     try:
@@ -1203,7 +1203,7 @@ def buscar_youtube():
 @app.route('/buscar_libros', methods=['GET'])
 def buscar_libros():
     query = request.args.get('query')
-    api_key = "AIzaSyDHQYr0BNu2sRGX0OvDQ8WTr2z-HleN4Aw"
+    api_key = os.getenv('GOOGLE_BOOKS_API_KEY')
     url = f"https://www.googleapis.com/books/v1/volumes?q={query}&key={api_key}"
     
     try:
