@@ -590,13 +590,13 @@ def completar_evaluacion(id):
 # API para completar una evaluación
 @app.route('/api/completar_evaluacion/<int:evaluacion_id>', methods=['POST'])
 def completar_evaluacion_api(evaluacion_id):
-    usuario_id = request.json.get('usuario_id', 0)
+    user_id = request.json.get('user_id', 0)
     respuestas = request.json.get('respuestas', [])
 
     # Guardar cada respuesta del usuario
     for respuesta in respuestas:
         nueva_respuesta = Answer(
-            user_id=usuario_id,
+            user_id=user_id,
             question_id=respuesta['question_id'],
             respuesta_usuario=respuesta['respuesta_usuario'],
             correcta=(respuesta['respuesta_usuario'] == respuesta['correcta'])
@@ -607,14 +607,14 @@ def completar_evaluacion_api(evaluacion_id):
     correctas = sum(1 for respuesta in respuestas if respuesta['respuesta_usuario'] == respuesta['correcta'])
     nota = (correctas / len(respuestas)) * 10 if respuestas else 0
 
-    feedback = Feedback.query.filter_by(evaluacion_id=evaluacion_id, user_id=usuario_id).first()
+    feedback = Feedback.query.filter_by(evaluacion_id=evaluacion_id, user_id=user_id).first()
     if feedback:
         feedback.nota = nota
         feedback.comentarios = f"Obtuviste {correctas} de {len(respuestas)} preguntas correctas."
     else:
         feedback = Feedback(
             evaluacion_id=evaluacion_id,
-            user_id=usuario_id,
+            user_id=user_id,
             nota=nota,
             comentarios=f"Obtuviste {correctas} de {len(respuestas)} preguntas correctas."
         )
@@ -628,8 +628,8 @@ def completar_evaluacion_api(evaluacion_id):
 # API para obtener retroalimentaciones recientes
 @app.route('/api/retroalimentacion_reciente', methods=['GET'])
 def obtener_retroalimentacion():
-    usuario_id = request.args.get('usuario_id', 0)  # Filtrar por usuario si es necesario
-    retroalimentacion = Feedback.query.filter_by(usuario_id=usuario_id).all()
+    user_id = request.args.get('user_id', 0)  # Filtrar por usuario si es necesario
+    retroalimentacion = Feedback.query.filter_by(user_id=user_id).all()
     return jsonify([{
         'evaluacion': fb.evaluacion.nombre,
         'comentarios': fb.comentarios,
@@ -778,7 +778,7 @@ def generar_retroalimentacion(evaluacion_id):
         return jsonify({'error': 'Evaluación no encontrada.'}), 404
 
     # Calcular el número de respuestas correctas y el total de preguntas
-    correctas = sum(1 for pregunta in evaluacion.questions if pregunta.respuesta_correcta)
+    correctas = sum(1 for pregunta in evaluacion.questions if pregunta.correcta)
     total_preguntas = len(evaluacion.questions)
     nota = calcular_nota(correctas, total_preguntas)
 
@@ -850,7 +850,7 @@ def mostrar_feedback(evaluacion_id):
         return jsonify({'feedback': 'No autorizado.'}), 401
 
     # Obtener la evaluación y el feedback asociado
-    evaluacion = db.session.get(Evaluation, evaluacion_id)
+    evaluacion = db.session.query(Evaluation).filter_by(id=evaluacion_id).first()
     feedback = Feedback.query.filter_by(evaluacion_id=evaluacion_id, user_id=session['user_id']).first()
 
     if not evaluacion or not feedback:
