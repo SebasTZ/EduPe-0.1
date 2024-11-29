@@ -13,6 +13,14 @@ import json
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
+#Alexandra
+from routes.psychology.PsychologyRoute import psychology_page
+from routes.wellbeing.WellbeingRoute import wellbeing_page
+from routes.selfesteem.SelfesteemRoute import selfesteem_page
+from routes.social.SocialRoute import social_page
+from routes.test.TestRoute import test_page
+#Alexandra
+
 pymysql.install_as_MySQLdb()
 
 app = Flask(__name__)
@@ -30,7 +38,9 @@ app.secret_key = 'your_secret_key'
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # MySQL configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:Sebas3120@localhost/chatter_ai_db'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:Sebas3120@localhost/chatter_ai_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/chatter_ai_db?charset=utf8'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root@localhost/chatter_ai_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -170,6 +180,59 @@ logging.basicConfig(level=logging.INFO)
 migrate = Migrate(app, db)
 
 # Rutas
+
+#Alexandra
+def calcular_resultado(respuestas):
+    puntajes = {
+        "Nunca": 0,
+        "A veces": 10,
+        "Siempre": 20
+    }
+    
+    puntaje_total = sum(puntajes[respuesta] for respuesta in respuestas.values())
+    
+    if puntaje_total <= 70:
+        return {
+            "puntaje": puntaje_total,
+            "mensaje": "Necesitas mejorar. Considera implementar más estrategias para manejar el estrés.",
+            "nivel": "bajo"
+        }
+    elif puntaje_total <= 130:
+        return {
+            "puntaje": puntaje_total,
+            "mensaje": "Estás en el camino correcto, pero hay áreas que puedes mejorar.",
+            "nivel": "medio"
+        }
+    else:
+        return {
+            "puntaje": puntaje_total,
+            "mensaje": "Excelente, tienes buenas prácticas para gestionar el estrés y mantener tu bienestar emocional. ¡Sigue así!",
+            "nivel": "alto"
+        }
+    
+app.register_blueprint(psychology_page)
+app.register_blueprint(wellbeing_page)
+app.register_blueprint(selfesteem_page)
+app.register_blueprint(social_page)
+app.register_blueprint(test_page)
+
+@app.route("/start")
+def index():
+    return redirect(url_for('psychology_page.Psychology'))
+
+@app.route('/submit-test', methods=['POST'])
+def submit_test():
+    respuestas = {str(i): request.form.get(f'question_{i}') 
+                 for i in range(1, 11)}
+    
+    print(respuestas)
+    
+    resultado = calcular_resultado(respuestas)
+    
+    return render_template('/pages/Resultado.html', resultado=resultado)
+
+#Alexandra
+
 
 @app.route('/')
 def home():
